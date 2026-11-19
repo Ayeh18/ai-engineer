@@ -1,0 +1,37 @@
+# 1. Start from an up-to-date main
+git checkout main
+git pull
+
+# 2. Create a new branch and switch to it
+git checkout -b my-new-branch
+
+# 3. (Add or edit your files)
+
+# 4. Check what changed
+git status
+
+# 5. Stage your changes
+git add .
+
+# 6. Commit them
+git commit -m "Describe your change"
+
+# 7. Push the branch to GitHub
+git push -u origin my-new-branch
+
+# 8. Open and merge the pull request on GitHub (website):
+#    https://github.com/Ayeh18/ai-engineer
+#    → "Compare & pull request" → "Create pull request" → "Merge pull request"
+
+# 9. Go back to main and pull the merged changes
+git checkout main
+git pull
+
+# 10. Delete the branch on your computer
+git branch -d my-new-branch
+
+# 11. Delete the branch on GitHub
+git push origin --delete my-new-branch
+
+# 12. (Optional) Remove the leftover remote branch name from your local list
+git fetch --prune
