@@ -1,37 +1,155 @@
+==========================================================
+  GIT CHEAT SHEET - branch, push, pull request, pull
+  Repo: https://github.com/Ayeh18/ai-engineer
+==========================================================
+
+Words to know
+-------------
+  repo      = your project folder, tracked by Git
+  local     = the copy on your computer
+  remote    = the copy on GitHub (called "origin")
+  main      = the main branch (the official version of your work)
+  branch    = a separate copy where you make changes safely,
+              without touching main
+  commit    = a saved snapshot of your changes, with a message
+  push      = send your commits from your computer to GitHub
+  pull      = bring new commits from GitHub to your computer
+  PR        = pull request: you ask GitHub to merge your
+              branch into main
+
+
+----------------------------------------------------------
+ A. ONE-TIME SETUP (only once per computer)
+----------------------------------------------------------
+
+# Tell Git who you are. Without this, "git commit" fails,
+# and GitHub will show "nothing to compare".
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
+
+# Check that it's set
+git config user.name
+git config user.email
+
+
+----------------------------------------------------------
+ B. GET THE LATEST VERSION FROM GITHUB
+----------------------------------------------------------
+
+git checkout main      # go to the main branch
+git pull               # download and apply new changes from GitHub
+
+# Always do this before you start new work.
+
+
+----------------------------------------------------------
+ C. FULL WORKFLOW: new branch -> push -> PR -> merge -> delete
+----------------------------------------------------------
+
 # 1. Start from an up-to-date main
 git checkout main
 git pull
 
 # 2. Create a new branch and switch to it
+#    (use a short name that says what you're doing,
+#     e.g. loops-notebook, add-functions)
 git checkout -b my-new-branch
 
-# 3. (Add or edit your files)
+# 3. Add or edit your files (in VS Code / Jupyter)
 
-# 4. Check what changed
+# 4. See what changed
 git status
+#    red   = changed but not staged yet
+#    green = staged, ready to commit
 
-# 5. Stage your changes
-git add .
+# 5. Stage your changes (choose what goes into the commit)
+git add .                          # stage ALL changes
+git add folder/file.ipynb          # or stage only one file
 
-# 6. Commit them
-git commit -m "Describe your change"
+# 6. Commit (save a snapshot with a message)
+git commit -m "Add loops notebook"
 
-# 7. Push the branch to GitHub
+# 7. Push your branch to GitHub
 git push -u origin my-new-branch
+#    -u links your local branch to GitHub. After the first push,
+#    you can just type: git push
 
-# 8. Open and merge the pull request on GitHub (website):
-#    https://github.com/Ayeh18/ai-engineer
-#    → "Compare & pull request" → "Create pull request" → "Merge pull request"
+# 8. Create and merge the pull request (on the GitHub website)
+#    - Open https://github.com/Ayeh18/ai-engineer
+#    - Click "Compare & pull request"
+#      (or: Pull requests tab -> New pull request
+#           base: main   <-   compare: my-new-branch)
+#    - Write a title -> "Create pull request"
+#    - Click "Merge pull request" -> "Confirm merge"
 
-# 9. Go back to main and pull the merged changes
+# 9. Go back to main and get the merged result
 git checkout main
 git pull
 
-# 10. Delete the branch on your computer
+# 10. Delete the branch on your computer (it's merged, no longer needed)
 git branch -d my-new-branch
 
 # 11. Delete the branch on GitHub
+#     (or click "Delete branch" on the PR page)
 git push origin --delete my-new-branch
 
-# 12. (Optional) Remove the leftover remote branch name from your local list
+# 12. Clean up old branch names in your local list
 git fetch --prune
+
+
+----------------------------------------------------------
+ D. USEFUL COMMANDS
+----------------------------------------------------------
+
+git status                   # what changed? which branch am I on?
+git branch                   # list your local branches (* = current)
+git branch -a                # list local + GitHub branches
+git log --oneline -5         # show the last 5 commits
+git checkout branch-name     # switch to another branch
+git diff                     # show exactly what changed (not staged yet)
+git fetch                    # check GitHub for updates (doesn't change your files)
+
+
+----------------------------------------------------------
+ E. COMMON PROBLEMS AND FIXES
+----------------------------------------------------------
+
+PROBLEM: GitHub says "There isn't anything to compare"
+WHY:     Your commit failed, so your branch is the same as main.
+         Usually Git doesn't know your name/email yet.
+FIX:     Do section A, then:
+           git commit -m "your message"
+           git push
+
+PROBLEM: "Please tell me who you are" when committing
+FIX:     Do section A.
+
+PROBLEM: git pull says
+         "untracked working tree files would be overwritten by merge"
+WHY:     You have a file on your computer that was never committed,
+         and GitHub has a file with the same name.
+FIX:     Move or rename your local file, then pull again:
+           move file.txt file-backup.txt
+           git pull
+         Then compare the two files, and keep what you need.
+
+PROBLEM: git pull says
+         "Your local changes would be overwritten"
+WHY:     You edited files but didn't commit them.
+FIX:     Option 1 - commit them first:
+           git add .
+           git commit -m "my changes"
+           git pull
+         Option 2 - set them aside for now:
+           git stash          # hide your changes
+           git pull
+           git stash pop      # bring your changes back
+
+PROBLEM: I'm on the wrong branch
+FIX:     git status                  # see which branch you're on
+         git checkout correct-branch
+
+PROBLEM: "error: The branch 'x' is not fully merged" when deleting
+WHY:     That branch has commits that aren't in main yet.
+FIX:     Merge the PR first. If you really want to throw it away:
+           git branch -D x           # capital D = force delete
